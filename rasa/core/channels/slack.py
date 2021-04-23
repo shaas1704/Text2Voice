@@ -412,6 +412,7 @@ class SlackInput(InputChannel):
                 "out_channel": event.get("channel"),
                 "thread_id": thread_id,
                 "users": users,
+                "team_id": event.get("team"),
             }
 
         if content_type == "application/x-www-form-urlencoded":
@@ -429,6 +430,7 @@ class SlackInput(InputChannel):
                 "out_channel": payload.get("channel", {}).get("id"),
                 "thread_id": thread_id,
                 "users": users,
+                "team_id": payload.get("team", {}).get("id"),
             }
 
         return {}

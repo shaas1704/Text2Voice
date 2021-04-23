@@ -54,6 +54,7 @@ def test_slack_metadata():
     channel = "channel1"
     authed_users = ["XXXXXXX", "YYYYYYY", "ZZZZZZZ"]
     ts = "1579802617.000800"
+    team_id = "XXXXXXXXX"
     header = {"content-type": "application/json"}
     direct_message_event = {
         "authed_users": authed_users,
@@ -63,7 +64,7 @@ def test_slack_metadata():
             "text": "hello world",
             "user": user,
             "ts": ts,
-            "team": "XXXXXXXXX",
+            "team": team_id,
             "blocks": [
                 {
                     "type": "rich_text",
@@ -95,16 +96,19 @@ def test_slack_metadata():
     assert metadata["out_channel"] == channel
     assert metadata["users"] == authed_users
     assert metadata["thread_id"] == ts
+    assert metadata["team_id"] == team_id
 
 
 def test_slack_form_metadata():
     user = "user1"
     channel = "channel1"
     authed_user = "XXXXXXX"
+    team_id = "XXXXXXXXX"
     ts = "1579802617.000800"
     header = {"content-type": "application/x-www-form-urlencoded"}
     payload = {
         "type": "block_actions",
+        "team": {"id": team_id, "domain": "example"},
         "user": {"id": authed_user, "username": user, "name": "name"},
         "channel": {"id": channel},
         "message": {
@@ -143,11 +147,13 @@ def test_slack_form_metadata():
     assert metadata["out_channel"] == channel
     assert metadata["users"][0] == authed_user
     assert metadata["thread_id"] == ts
+    assert metadata["team_id"] == team_id
 
 
 def test_slack_metadata_missing_keys():
     channel = "channel1"
     ts = "1579802617.000800"
+    team_id = "XXXXXXXXX"
     header = {"content-type": "application/json"}
     direct_message_event = {
         "event": {
@@ -155,7 +161,7 @@ def test_slack_metadata_missing_keys():
             "type": "message",
             "text": "hello world",
             "ts": ts,
-            "team": "XXXXXXXXX",
+            "team": team_id,
             "blocks": [
                 {
                     "type": "rich_text",
@@ -187,6 +193,7 @@ def test_slack_metadata_missing_keys():
     assert metadata["users"] == []
     assert metadata["out_channel"] == channel
     assert metadata["thread_id"] == ts
+    assert metadata["team_id"] == team_id
 
 
 def test_slack_form_metadata_missing_keys():
@@ -231,6 +238,7 @@ def test_slack_form_metadata_missing_keys():
     assert metadata["users"] == []
     assert metadata["out_channel"] == channel
     assert metadata["thread_id"] == ts
+    assert metadata["team_id"] is None
 
 
 def test_slack_no_metadata():
